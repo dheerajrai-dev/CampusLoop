@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy import or_
 from backend.app.core.deps import get_db, get_optional_current_user
 from backend.app.models.request import Request
@@ -34,7 +34,7 @@ def get_explore_feed(
 
     # 1. Fetch Requests
     if item_type in ["all", "request", "requests"]:
-        req_query = db.query(Request).filter(Request.status == "open")
+        req_query = db.query(Request).options(joinedload(Request.requester), selectinload(Request.offers)).filter(Request.status == "open")
         if target_campus:
             req_query = req_query.filter(Request.campus_id == target_campus)
         if blocked_ids:
@@ -88,7 +88,7 @@ def get_explore_feed(
 
     # 2. Fetch Listings (Marketplace Items)
     if item_type in ["all", "listing", "listings", "item", "items"]:
-        list_query = db.query(Listing).filter(Listing.availability_status == "available")
+        list_query = db.query(Listing).options(joinedload(Listing.owner), selectinload(Listing.images)).filter(Listing.availability_status == "available")
         if target_campus:
             list_query = list_query.filter(Listing.campus_id == target_campus)
         if blocked_ids:
@@ -141,7 +141,7 @@ def get_explore_feed(
 
     # 3. Fetch Services
     if item_type in ["all", "service", "services"]:
-        srv_query = db.query(Service).filter(Service.status == "active")
+        srv_query = db.query(Service).options(joinedload(Service.provider)).filter(Service.status == "active")
         if target_campus:
             srv_query = srv_query.filter(Service.campus_id == target_campus)
         if blocked_ids:

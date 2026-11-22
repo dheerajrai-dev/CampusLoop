@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Plus, Search, MapPin, ArrowRight } from "lucide-react";
+import { Plus, Search, MapPin, ArrowRight } from "lucide-react";
 import { api } from "../../lib/api";
 import { Badge } from "../../components/common/Badge";
 import { EmptyState } from "../../components/common/EmptyState";

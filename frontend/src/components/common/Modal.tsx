@@ -42,12 +42,16 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 flex items-center justify-center p-3 sm:p-4">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className={`bg-white rounded-xl shadow-lg border border-[#e6e6e6] w-full ${maxWidthStyles} max-h-[90vh] overflow-hidden flex flex-col transform transition-all`}
       >
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#f0efee] bg-[#fafafa]">
-          <h3 className="font-bold text-[#1a1a1a] text-base tracking-tight">{title}</h3>
+          <h3 id="modal-title" className="font-bold text-[#1a1a1a] text-base tracking-tight">{title}</h3>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="text-[#73726e] hover:text-[#1a1a1a] p-1 rounded-md hover:bg-[#eaeaea] transition-colors"
           >
             <X className="w-4 h-4" />

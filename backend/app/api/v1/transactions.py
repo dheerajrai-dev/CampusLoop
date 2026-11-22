@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 from backend.app.core.deps import get_db, get_current_user
 from backend.app.models.transaction import Transaction
@@ -23,7 +23,12 @@ def get_my_transactions(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    transactions = db.query(Transaction).filter(
+    transactions = db.query(Transaction).options(
+        joinedload(Transaction.requester_or_buyer),
+        joinedload(Transaction.provider_or_owner),
+        joinedload(Transaction.request),
+        joinedload(Transaction.offer),
+    ).filter(
         or_(
             Transaction.requester_or_buyer_id == current_user.id,
             Transaction.provider_or_owner_id == current_user.id,
@@ -38,7 +43,12 @@ def get_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    txn = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    txn = db.query(Transaction).options(
+        joinedload(Transaction.requester_or_buyer),
+        joinedload(Transaction.provider_or_owner),
+        joinedload(Transaction.request),
+        joinedload(Transaction.offer),
+    ).filter(Transaction.id == transaction_id).first()
     if not txn:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
 
@@ -58,7 +68,12 @@ def update_transaction_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    txn = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    txn = db.query(Transaction).options(
+        joinedload(Transaction.requester_or_buyer),
+        joinedload(Transaction.provider_or_owner),
+        joinedload(Transaction.request),
+        joinedload(Transaction.offer),
+    ).filter(Transaction.id == transaction_id).first()
     if not txn:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
 
@@ -101,7 +116,12 @@ def confirm_completion(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    txn = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    txn = db.query(Transaction).options(
+        joinedload(Transaction.requester_or_buyer),
+        joinedload(Transaction.provider_or_owner),
+        joinedload(Transaction.request),
+        joinedload(Transaction.offer),
+    ).filter(Transaction.id == transaction_id).first()
     if not txn:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
 
@@ -143,7 +163,12 @@ def cancel_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    txn = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    txn = db.query(Transaction).options(
+        joinedload(Transaction.requester_or_buyer),
+        joinedload(Transaction.provider_or_owner),
+        joinedload(Transaction.request),
+        joinedload(Transaction.offer),
+    ).filter(Transaction.id == transaction_id).first()
     if not txn:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
 
@@ -194,7 +219,12 @@ def create_review(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    txn = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    txn = db.query(Transaction).options(
+        joinedload(Transaction.requester_or_buyer),
+        joinedload(Transaction.provider_or_owner),
+        joinedload(Transaction.request),
+        joinedload(Transaction.offer),
+    ).filter(Transaction.id == transaction_id).first()
     if not txn:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
 

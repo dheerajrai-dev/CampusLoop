@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Repeat, Plus, Search, Calendar, MessageSquare, ShieldCheck, ArrowRight, Zap, Sparkles } from "lucide-react";
+import { Plus, Search, Calendar, ShieldCheck, ArrowRight } from "lucide-react";
 import { api } from "../../lib/api";
 import { Badge } from "../../components/common/Badge";
 import { EmptyState } from "../../components/common/EmptyState";

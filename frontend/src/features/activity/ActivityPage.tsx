@@ -3,19 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
   CheckCircle2,
-  Clock,
   Star,
   ShieldCheck,
   Check,
-  MessageSquare,
   ArrowUpRight,
-  Send,
-  HelpCircle,
-  FileText,
-  AlertCircle,
-  Ban,
-  UserCheck,
-  XCircle,
   RotateCcw,
 } from "lucide-react";
 import { api } from "../../lib/api";

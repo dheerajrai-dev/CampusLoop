@@ -10,8 +10,6 @@ import {
   Phone,
   CheckCircle2,
   AlertCircle,
-  Clock,
-  Sparkles,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { Badge } from "../../components/common/Badge";

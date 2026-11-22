@@ -8,9 +8,6 @@ import {
   Wrench,
   ArrowRight,
   ShieldCheck,
-  MapPin,
-  Clock,
-  Plus,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { Badge } from "../../components/common/Badge";
@@ -29,16 +26,14 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
   onOpenCreateService,
 }) => {
   const [activeType, setActiveType] = useState<string>("all");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Explore feed
   const { data: items = [], isLoading } = useQuery({
-    queryKey: ["explore", activeType, selectedCategory, searchQuery],
+    queryKey: ["explore", activeType, searchQuery],
     queryFn: () =>
       api.getExplore({
         type: activeType,
-        category: selectedCategory === "All" ? undefined : selectedCategory,
         q: searchQuery.trim() || undefined,
       }),
   });

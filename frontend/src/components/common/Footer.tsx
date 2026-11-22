@@ -1,6 +1,8 @@
 import React from "react";
 import { Heart, ShieldCheck, MapPin } from "lucide-react";
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t border-[#e6e6e6] mt-16 text-[#73726e] text-xs">
@@ -48,7 +50,7 @@ export const Footer: React.FC = () => {
 
         <div className="pt-6 border-t border-[#e6e6e6] flex flex-col sm:flex-row items-center justify-between gap-4 text-[#73726e]">
           <div>
-            &copy; {new Date().getFullYear()} CampusLoop. Built for students, by students.
+            &copy; {CURRENT_YEAR} CampusLoop. Built for students, by students.
           </div>
           <div className="flex items-center gap-1">
             Made with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 mx-0.5" /> for university communities

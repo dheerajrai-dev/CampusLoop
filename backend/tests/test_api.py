@@ -347,3 +347,45 @@ def test_unified_activity():
     assert "completed_tasks" in data
     assert "cancelled_tasks" in data
     assert "stats" in data
+
+
+def test_explore_feed_filtering():
+    # Test explore feed query filtering
+    res = client.get("/api/v1/explore?type=all")
+    assert res.status_code == 200
+    items = res.json()
+    assert isinstance(items, list)
+    assert len(items) >= 1
+
+    # Test search query
+    res_search = client.get("/api/v1/explore?q=python")
+    assert res_search.status_code == 200
+    search_items = res_search.json()
+    assert isinstance(search_items, list)
+
+
+def test_moderation_and_reporting():
+    res_demo = client.post(
+        "/api/v1/auth/login",
+        json={"email": "demo@campus.edu", "password": "campusloop123"}
+    )
+    headers_demo = {"Authorization": f"Bearer {res_demo.json()['access_token']}"}
+
+    # Fetch a listing to report
+    listings = client.get("/api/v1/listings").json()
+    assert len(listings) >= 1
+    target_listing = listings[0]
+
+    # Submit community moderation report
+    rep = client.post(
+        "/api/v1/reports",
+        headers=headers_demo,
+        json={
+            "target_type": "listing",
+            "target_id": target_listing["id"],
+            "reason": "Suspicious listing",
+            "details": "Checking community moderation validation."
+        }
+    )
+    assert rep.status_code == 201
+    assert rep.json()["status"] == "open"

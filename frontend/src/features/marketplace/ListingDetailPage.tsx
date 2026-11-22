@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   ArrowLeft,
   MapPin,
@@ -10,8 +10,6 @@ import {
   Phone,
   CheckCircle2,
   AlertCircle,
-  Clock,
-  Sparkles,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { Badge } from "../../components/common/Badge";
@@ -21,8 +19,7 @@ import { useAuth } from "../../context/AuthContext";
 export const ListingDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { user, isAuthenticated, loginAsDemo } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   // Inquire Modal
   const [inquireModalOpen, setInquireModalOpen] = useState(false);

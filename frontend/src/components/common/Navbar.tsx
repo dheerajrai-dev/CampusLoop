@@ -129,6 +129,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="relative" ref={createMenuRef}>
             <button
               onClick={() => setCreateMenuOpen(!createMenuOpen)}
+              aria-expanded={createMenuOpen}
+              aria-haspopup="true"
+              aria-label="Create new request, listing, or service"
               className="btn-primary text-sm px-3 py-1.5 h-auto flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -198,6 +201,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </Link>
               <button
                 onClick={logout}
+                aria-label="Sign out"
                 className="p-1.5 text-[#73726e] hover:text-[#1a1a1a] rounded-md hover:bg-[#f6f5f4] transition-colors"
                 title="Sign out"
               >

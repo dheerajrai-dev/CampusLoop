@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy import or_
 from backend.app.core.deps import get_db, get_current_user, get_optional_current_user
 from backend.app.models.listing import Listing, ListingImage
@@ -24,7 +24,7 @@ def list_listings(
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_current_user),
 ):
-    query = db.query(Listing)
+    query = db.query(Listing).options(joinedload(Listing.owner), selectinload(Listing.images))
 
     if current_user and not campus_id:
         query = query.filter(Listing.campus_id == current_user.campus_id)
