@@ -20,7 +20,8 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6, description="Password must be at least 6 characters")
     full_name: str = Field(min_length=2, max_length=100)
-    campus_id: str
+    campus_id: str | None = None
+    campus_name: str | None = None
     department: str | None = None
     course: str | None = None
     year_or_semester: str | None = None

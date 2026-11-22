@@ -32,13 +32,19 @@ export const RegisterPage: React.FC = () => {
       return;
     }
 
+    const typedCampus = values.campus_name?.trim() || values.campus_id?.trim() || "";
+    const matchedCampus = campuses.find(
+      (c) => c.name.toLowerCase() === typedCampus.toLowerCase() || c.id === typedCampus
+    );
+
     try {
       setError(null);
       await authRegister({
         email: values.email.trim(),
         password: values.password,
         full_name: values.full_name.trim(),
-        campus_id: values.campus_id,
+        campus_id: matchedCampus ? matchedCampus.id : undefined,
+        campus_name: typedCampus,
         department: values.department?.trim() || undefined,
         course: values.course?.trim() || undefined,
         year_or_semester: values.year_or_semester?.trim() || undefined,
@@ -76,17 +82,31 @@ export const RegisterPage: React.FC = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
           <div>
-            <label className="block text-[13px] font-semibold text-[#1a1a1a] mb-1">Select Campus *</label>
-            <select
-              {...register("campus_id", { required: "Campus is required" })}
-              className="w-full px-3 py-2 text-xs rounded-md border border-[#e6e6e6] bg-white focus:outline-none focus:border-[#0075de]"
-            >
-              {campuses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} {c.email_domain ? `(@${c.email_domain})` : ""}
-                </option>
-              ))}
-            </select>
+            <label className="block text-[13px] font-semibold text-[#1a1a1a] mb-1">
+              Select or Type Your University / Campus *
+            </label>
+            <div className="relative">
+              <input
+                {...register("campus_name", { required: "Please enter or select your university name" })}
+                type="text"
+                list="campus-suggestions"
+                placeholder="Type your university name (e.g. Stanford University, Apex Institute...)"
+                className="w-full px-3.5 py-2 text-xs rounded-md border border-[#e6e6e6] bg-white focus:outline-none focus:border-[#0075de]"
+              />
+              <datalist id="campus-suggestions">
+                {campuses.map((c) => (
+                  <option key={c.id} value={c.name}>
+                    {c.email_domain ? `@${c.email_domain}` : ""}
+                  </option>
+                ))}
+              </datalist>
+            </div>
+            {errors.campus_name && (
+              <p className="text-[11px] text-rose-500 mt-0.5">{errors.campus_name.message as string}</p>
+            )}
+            <p className="text-[11px] text-[#73726e] mt-1">
+              Type any university or select from suggested campus communities.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

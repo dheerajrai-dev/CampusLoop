@@ -9,20 +9,23 @@ from backend.app.models.service import Service
 
 
 def seed_database(db: Session):
-    # Check if already seeded
-    if db.query(Campus).count() > 0:
+    # Check if demo user is already seeded
+    existing_demo = db.query(User).filter(User.email == "demo@campus.edu").first()
+    if existing_demo:
         return
 
     print("Seeding minimal, realistic CampusLoop sample data...")
 
     # 1. Campus
-    campus = Campus(
-        name="Apex Institute of Technology (Main Campus)",
-        email_domain="campus.edu",
-        city="Bengaluru",
-    )
-    db.add(campus)
-    db.flush()
+    campus = db.query(Campus).first()
+    if not campus:
+        campus = Campus(
+            name="Apex Institute of Technology (Main Campus)",
+            email_domain="campus.edu",
+            city="Bengaluru",
+        )
+        db.add(campus)
+        db.flush()
 
     pw_hash = hash_password("campusloop123")
 

@@ -68,6 +68,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  demoLogin: () =>
+    request<{ access_token: string; token_type: string; user: User }>("/auth/demo-login", {
+      method: "POST",
+    }),
   register: (data: any) =>
     request<{ access_token: string; token_type: string; user: User }>("/auth/register", {
       method: "POST",

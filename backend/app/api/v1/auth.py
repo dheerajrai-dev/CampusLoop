@@ -50,13 +50,26 @@ def register(user_in: RegisterRequest, db: Session = Depends(get_db)):
             detail="A user with this email address already exists.",
         )
 
-    # Check campus
-    campus = db.query(Campus).filter(Campus.id == user_in.campus_id).first()
+    # Resolve campus by ID, by typed name, or create dynamically if new university
+    campus = None
+    search_term = (user_in.campus_name or user_in.campus_id or "").strip()
+
+    if user_in.campus_id:
+        campus = db.query(Campus).filter(Campus.id == user_in.campus_id).first()
+
+    if not campus and search_term:
+        campus = db.query(Campus).filter(Campus.name.ilike(search_term)).first()
+
     if not campus:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Selected campus was not found.",
+        c_name = search_term or "My University"
+        user_email_domain = user_in.email.lower().split("@")[-1] if "@" in user_in.email else "campus.edu"
+        campus = Campus(
+            name=c_name,
+            email_domain=user_email_domain,
+            city="Campus Community",
         )
+        db.add(campus)
+        db.flush()
 
     # Campus domain verification or demo verification
     is_verified = False
@@ -71,7 +84,7 @@ def register(user_in: RegisterRequest, db: Session = Depends(get_db)):
         email=user_in.email.lower(),
         password_hash=hashed_pw,
         full_name=user_in.full_name,
-        campus_id=user_in.campus_id,
+        campus_id=campus.id,
         department=user_in.department,
         course=user_in.course,
         year_or_semester=user_in.year_or_semester,
@@ -99,11 +112,39 @@ def login(login_in: LoginRequest, db: Session = Depends(get_db)):
     check_rate_limit(f"login_{login_in.email}", max_requests=15, window_seconds=60)
 
     user = db.query(User).filter(User.email == login_in.email.lower()).first()
+    if not user and login_in.email.lower() == "demo@campus.edu":
+        from backend.app.db.seed import seed_database
+        seed_database(db)
+        user = db.query(User).filter(User.email == login_in.email.lower()).first()
+
     if not user or not verify_password(login_in.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password.",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    token = create_access_token(user.id)
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user": UserOut.model_validate(user).model_dump()
+    }
+
+
+@router.post("/demo-login", response_model=dict)
+def demo_login(db: Session = Depends(get_db)):
+    """1-Click fail-safe demo sign-in endpoint for evaluations and Vercel deployments."""
+    user = db.query(User).filter(User.email == "demo@campus.edu").first()
+    if not user:
+        from backend.app.db.seed import seed_database
+        seed_database(db)
+        user = db.query(User).filter(User.email == "demo@campus.edu").first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to initialize demo student account.",
         )
 
     token = create_access_token(user.id)

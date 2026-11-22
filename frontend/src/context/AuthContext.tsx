@@ -57,7 +57,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginAsDemo = async () => {
-    await login("demo@campus.edu", "campusloop123");
+    try {
+      const res = await api.demoLogin();
+      localStorage.setItem("campusloop_token", res.access_token);
+      setToken(res.access_token);
+      setUser(res.user);
+    } catch {
+      await login("demo@campus.edu", "campusloop123");
+    }
   };
 
   const logout = () => {

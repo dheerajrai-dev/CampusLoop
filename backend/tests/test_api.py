@@ -47,6 +47,34 @@ def test_login_demo_user():
     assert data["user"]["phone"] == "+91 98765 43210"
 
 
+def test_demo_login_endpoint():
+    response = client.post("/api/v1/auth/demo-login")
+    assert response.status_code == 200
+    data = response.json()
+    assert "access_token" in data
+    assert data["user"]["email"] == "demo@campus.edu"
+    assert data["user"]["is_verified"] is True
+
+
+def test_register_with_custom_typed_university():
+    unique_email = f"student.{uuid.uuid4().hex[:6]}@stanford.edu"
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": unique_email,
+            "password": "strongpassword123",
+            "full_name": "Jordan Smith",
+            "campus_name": "Stanford University",
+            "department": "Symbolic Systems",
+        }
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert "access_token" in data
+    assert data["user"]["email"] == unique_email
+    assert data["user"]["campus"]["name"] == "Stanford University"
+
+
 def test_login_invalid_password():
     response = client.post(
         "/api/v1/auth/login",
