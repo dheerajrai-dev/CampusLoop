@@ -84,13 +84,9 @@ Run the complete test suite with `pytest`:
 
 ---
 
-## 🚢 Production Deployment
+## 🚢 Production Deployment (Vercel Full-Stack)
 
-CampusLoop supports multiple production deployment strategies:
-
-### 1. ⚡ Vercel Full-Stack (Frontend + Python Backend Together)
-
-Deploy both the React frontend and FastAPI backend to Vercel in a single project with **zero CORS configuration needed**:
+CampusLoop is configured to deploy both the React frontend and FastAPI backend directly to **Vercel** in a single project with **zero CORS configuration needed**:
 
 1. Push your repository to GitHub or GitLab.
 2. In the [Vercel Dashboard](https://vercel.com/new), click **Add New...** → **Project**.
@@ -99,46 +95,14 @@ Deploy both the React frontend and FastAPI backend to Vercel in a single project
 5. Under **Environment Variables**, set:
    - `JWT_SECRET`: Random 32+ character hex string (run `python -c "import secrets; print(secrets.token_hex(32))"`).
    - `ENVIRONMENT`: `production`
-   - `AUTO_SEED`: `true`
-   - `DATABASE_URL`: *(Recommended)* PostgreSQL connection string (e.g. from [Neon.tech](https://neon.tech), [Supabase](https://supabase.com), or Vercel Postgres). If omitted, falls back to `/tmp/campusloop.db` for ephemeral preview.
+   - `AUTO_SEED`: `true` (populates initial verified campus and sample listings on first launch)
+   - `DATABASE_URL`: *(Recommended)* PostgreSQL connection string (e.g. from [Neon.tech](https://neon.tech), [Supabase](https://supabase.com), or Vercel Postgres). If omitted, falls back to `/tmp/campusloop.db` for ephemeral preview testing.
 6. Click **Deploy**!
 
-### 2. 🐳 All-in-One Docker Container (Render, Railway, Fly.io, Cloud Run, VPS)
-
-A single multi-stage container that builds the React SPA and runs FastAPI with Uvicorn:
-```bash
-# Build image
-docker build -t campusloop .
-
-# Run with persistent storage
-docker run -d \
-  --name campusloop \
-  -p 8000:8000 \
-  -v campusloop_data:/app/data \
-  -e ENVIRONMENT=production \
-  -e JWT_SECRET=$(python -c "import secrets; print(secrets.token_hex(32))") \
-  --restart unless-stopped \
-  campusloop
-```
-
-### 3. 🐘 Production Docker Compose (PostgreSQL 16 + Nginx)
-
-For self-hosted Linux servers or virtual private servers (VPS):
-```bash
-cp .env.example .env
-# Edit .env with your POSTGRES_PASSWORD and JWT_SECRET
-docker compose -f docker-compose.prod.yml up -d --build
-```
-Spins up:
-- `db`: PostgreSQL 16 Alpine with persistent volume and healthchecks
-- `backend`: FastAPI Python 3.12 service
-- `frontend`: Hardened Nginx container with Gzip compression, asset caching, and SPA routing
-
-### 4. 🚀 Render.com (1-Click Blueprint)
-
-The repository includes a ready-to-use [`render.yaml`](render.yaml) specification:
-1. In the [Render Dashboard](https://dashboard.render.com), click **New +** → **Blueprint**.
-2. Connect this repository. Render automatically provisions the web service, creates a PostgreSQL database, generates secrets, and sets up health checks.
+Once deployed:
+- **Web App**: `https://your-app.vercel.app/` (React SPA)
+- **API Health**: `https://your-app.vercel.app/health` (`{"status": "ok"}`)
+- **Swagger Docs**: `https://your-app.vercel.app/docs` (Interactive API docs)
 
 ---
 
