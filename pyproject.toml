@@ -4,3 +4,6 @@ testpaths = ["backend/tests"]
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
+
+[tool.vercel]
+entrypoint = "main:app"
