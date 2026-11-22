@@ -9,7 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
-  loginAsDemo: (email: string) => Promise<void>;
+  loginAsDemo: () => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -29,8 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setUser(null);
       }
-    } catch (err) {
-      console.warn("Failed to fetch current user session, clearing token");
+    } catch {
       localStorage.removeItem("campusloop_token");
       setToken(null);
       setUser(null);
@@ -57,8 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(res.user);
   };
 
-  const loginAsDemo = async (email: string) => {
-    await login(email, "campus123");
+  const loginAsDemo = async () => {
+    await login("demo@campus.edu", "campusloop123");
   };
 
   const logout = () => {

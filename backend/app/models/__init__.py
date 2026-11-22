@@ -6,6 +6,7 @@ from backend.app.models.service import Service
 from backend.app.models.transaction import Transaction
 from backend.app.models.review import Review
 from backend.app.models.moderation import Report, Block
+from backend.app.models.message import Message
 
 __all__ = [
     "Campus",
@@ -19,4 +20,5 @@ __all__ = [
     "Review",
     "Report",
     "Block",
+    "Message",
 ]

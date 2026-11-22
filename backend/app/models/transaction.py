@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import String, Boolean, DateTime, ForeignKey
+from sqlalchemy import String, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.db.base import Base
 
@@ -24,6 +24,8 @@ class Transaction(Base):
     )  # accepted, in_progress, completed, cancelled
     completion_confirmed_by_requester: Mapped[bool] = mapped_column(Boolean, default=False)
     completion_confirmed_by_provider: Mapped[bool] = mapped_column(Boolean, default=False)
+    cancellation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cancelled_by_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Plus, Search, MapPin, ShieldCheck, ArrowRight } from "lucide-react";
+import { ShoppingBag, Plus, Search, MapPin, ArrowRight } from "lucide-react";
 import { api } from "../../lib/api";
 import { Badge } from "../../components/common/Badge";
 import { EmptyState } from "../../components/common/EmptyState";
@@ -45,24 +45,21 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onOpenCreateLi
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="paper-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5" />
-            </div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Campus Marketplace</h1>
+            <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">Campus Marketplace</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Exchange, lend, sell, or give away items within your verified campus community.
+          <p className="text-xs text-[#73726e] mt-0.5">
+            Borrow, lend, sell, or giveaway textbooks, electronics, and supplies within your verified campus community.
           </p>
         </div>
 
         <button
           onClick={onOpenCreateListing}
-          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 shrink-0"
+          className="btn-primary text-xs flex items-center gap-1.5 shrink-0"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3.5 h-3.5" />
           List an Item
         </button>
       </div>
@@ -70,21 +67,21 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onOpenCreateLi
       {/* Filter and Mode Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#73726e]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search textbooks, calculators, equipment, lab coats..."
-            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-white shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[#e6e6e6] bg-white focus:outline-none focus:border-[#0075de] transition-colors placeholder:text-[#888]"
           />
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2.5 flex-wrap sm:flex-nowrap">
           <select
             value={selectedMode}
             onChange={(e) => setSelectedMode(e.target.value)}
-            className="px-3.5 py-2.5 text-xs font-medium rounded-xl border border-slate-200 bg-white shadow-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+            className="px-3.5 py-2.5 text-sm font-medium rounded-lg border border-[#e6e6e6] bg-white text-[#1a1a1a] focus:outline-none focus:border-[#0075de] transition-colors flex-1 sm:flex-initial"
           >
             <option value="All">All Modes</option>
             <option value="sell">Sell Only</option>
@@ -96,7 +93,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onOpenCreateLi
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3.5 py-2.5 text-xs font-medium rounded-xl border border-slate-200 bg-white shadow-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+            className="px-3.5 py-2.5 text-sm font-medium rounded-lg border border-[#e6e6e6] bg-white text-[#1a1a1a] focus:outline-none focus:border-[#0075de] transition-colors flex-1 sm:flex-initial"
           >
             <option value="All">All Categories</option>
             <option value="Books & Notes">Books & Notes</option>
@@ -112,7 +109,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onOpenCreateLi
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="h-44 bg-white rounded-2xl border border-slate-200 animate-pulse p-5"></div>
+            <div key={n} className="h-44 bg-white rounded-xl border border-[#e6e6e6] animate-pulse p-5"></div>
           ))}
         </div>
       ) : listings.length === 0 ? (
@@ -128,34 +125,34 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onOpenCreateLi
             <Link
               key={item.id}
               to={`/marketplace/${item.id}`}
-              className="group bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-emerald-200 transition-all flex flex-col justify-between"
+              className="paper-card hover:border-[#b8ddfe] transition-all flex flex-col justify-between group min-w-0"
             >
               <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-xs font-semibold text-[#73726e] uppercase tracking-wider">
                     {item.category}
                   </span>
                   {getModeBadge(item)}
                 </div>
 
-                <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 text-base">
+                <h3 className="font-bold text-[#1a1a1a] group-hover:text-[#0075de] transition-colors line-clamp-2 text-base leading-snug break-words">
                   {item.title}
                 </h3>
 
-                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                <p className="text-[13px] text-[#555] line-clamp-2 leading-relaxed break-words">
                   {item.description}
                 </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <div className="flex items-center gap-1.5 max-w-[170px] truncate text-slate-600">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">{item.pickup_area}</span>
+              <div className="pt-3.5 mt-3.5 border-t border-[#f0efee] flex items-center justify-between text-xs text-[#73726e] gap-2">
+                <div className="flex items-center gap-1.5 min-w-0 flex-1 text-[#454340]">
+                  <MapPin className="w-3.5 h-3.5 text-[#73726e] shrink-0" />
+                  <span className="truncate text-xs">{item.pickup_area}</span>
                 </div>
 
-                <div className="flex items-center gap-1 text-emerald-700 font-semibold group-hover:translate-x-0.5 transition-transform">
+                <div className="flex items-center gap-1 text-[#0075de] font-semibold group-hover:translate-x-0.5 transition-transform text-xs shrink-0">
                   <span>Details</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
             </Link>

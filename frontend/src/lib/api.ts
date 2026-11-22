@@ -8,6 +8,8 @@ import {
   ServiceItem,
   Transaction,
   Review,
+  UnifiedActivity,
+  Message,
 } from "../types";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api/v1";
@@ -71,6 +73,16 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  forgotPassword: (email: string) =>
+    request<{ message: string; demo_reset_code?: string; note?: string }>("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (data: { email: string; reset_code: string; new_password: string }) =>
+    request<{ message: string }>("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   getMe: () => request<User>("/auth/me"),
   updateMe: (data: Partial<User>) =>
     request<User>("/users/me", {
@@ -82,6 +94,7 @@ export const api = {
       `/users/${userId}`
     ),
   getUserReviews: (userId: string) => request<Review[]>(`/users/${userId}/reviews`),
+  getMyUnifiedActivity: () => request<UnifiedActivity>("/users/me/activity"),
   blockUser: (userId: string) =>
     request<{ message: string }>(`/users/${userId}/block`, { method: "POST" }),
 
@@ -96,13 +109,15 @@ export const api = {
   },
 
   // Requests
-  getRequests: (params: { category?: string; q?: string; status?: string } = {}) => {
+  getRequests: (params: { category?: string; q?: string; status?: string; sort?: string } = {}) => {
     const query = new URLSearchParams();
     if (params.category) query.set("category", params.category);
     if (params.q) query.set("q", params.q);
     if (params.status) query.set("status", params.status);
+    if (params.sort) query.set("sort", params.sort);
     return request<RequestItem[]>(`/requests?${query.toString()}`);
   },
+  getRecommendedRequests: () => request<RequestItem[]>("/requests/recommended"),
   getRequest: (id: string) => request<RequestItem>(`/requests/${id}`),
   createRequest: (data: Partial<RequestItem>) =>
     request<RequestItem>("/requests", {
@@ -113,6 +128,10 @@ export const api = {
     request<RequestItem>(`/requests/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
+    }),
+  cancelRequest: (id: string) =>
+    request<RequestItem>(`/requests/${id}/cancel`, {
+      method: "PATCH",
     }),
   submitOffer: (requestId: string, data: { message: string; proposed_price?: number; availability_note?: string }) =>
     request<Offer>(`/requests/${requestId}/offers`, {
@@ -147,6 +166,11 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  inquireListing: (listingId: string, data: { message: string; proposed_meeting_spot?: string }) =>
+    request<Transaction>(`/listings/${listingId}/inquire`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   archiveListing: (id: string) =>
     request<{ message: string }>(`/listings/${id}`, {
       method: "DELETE",
@@ -167,6 +191,11 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  bookService: (serviceId: string, data: { message: string; desired_timeline?: string }) =>
+    request<Transaction>(`/services/${serviceId}/book`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   archiveService: (id: string) =>
     request<{ message: string }>(`/services/${id}`, {
       method: "DELETE",
@@ -184,11 +213,29 @@ export const api = {
     request<Transaction>(`/transactions/${id}/confirm-completion`, {
       method: "POST",
     }),
+  cancelTransaction: (id: string, reason: string) =>
+    request<Transaction>(`/transactions/${id}/cancel`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    }),
   createReview: (transactionId: string, data: { rating: number; comment?: string }) =>
     request<Review>(`/transactions/${transactionId}/reviews`, {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  // In-app Messages
+  sendMessage: (data: { recipient_id: string; related_type: string; related_id: string; content: string }) =>
+    request<Message>("/messages", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getMessages: (relatedId: string, relatedType?: string) => {
+    const query = new URLSearchParams();
+    query.set("related_id", relatedId);
+    if (relatedType) query.set("related_type", relatedType);
+    return request<Message[]>(`/messages?${query.toString()}`);
+  },
 
   // Moderation
   reportItem: (data: { target_type: string; target_id: string; reason: string; details?: string }) =>

@@ -19,6 +19,14 @@ class User(Base):
     avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    # Voluntary contact preferences
+    phone: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    show_phone: Mapped[bool] = mapped_column(Boolean, default=False)
+    whatsapp: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    show_whatsapp: Mapped[bool] = mapped_column(Boolean, default=False)
+    contact_note: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -29,8 +37,12 @@ class User(Base):
     # Relationships
     campus: Mapped["Campus"] = relationship("Campus", back_populates="users")
     listings: Mapped[list["Listing"]] = relationship("Listing", back_populates="owner")
-    requests: Mapped[list["Request"]] = relationship("Request", back_populates="requester")
-    offers: Mapped[list["Offer"]] = relationship("Offer", back_populates="provider")
+    requests: Mapped[list["Request"]] = relationship(
+        "Request", foreign_keys="Request.requester_id", back_populates="requester"
+    )
+    offers: Mapped[list["Offer"]] = relationship(
+        "Offer", foreign_keys="Offer.provider_id", back_populates="provider"
+    )
     services: Mapped[list["Service"]] = relationship("Service", back_populates="provider")
 
 

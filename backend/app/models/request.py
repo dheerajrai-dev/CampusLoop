@@ -24,7 +24,13 @@ class Request(Base):
     deadline: Mapped[str | None] = mapped_column(String(100), nullable=True)
     status: Mapped[str] = mapped_column(
         String(50), default="open", index=True, nullable=False
-    )  # open, assigned, completed, cancelled, archived
+    )  # open, assigned, in_progress, completed, cancelled, archived
+    assigned_provider_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=True, index=True
+    )
+    accepted_offer_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("offers.id"), nullable=True, index=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -33,9 +39,10 @@ class Request(Base):
     )
 
     # Relationships
-    requester: Mapped["User"] = relationship("User", back_populates="requests")
+    requester: Mapped["User"] = relationship("User", foreign_keys=[requester_id], back_populates="requests")
+    assigned_provider: Mapped["User"] = relationship("User", foreign_keys=[assigned_provider_id])
     offers: Mapped[list["Offer"]] = relationship(
-        "Offer", back_populates="request", cascade="all, delete-orphan"
+        "Offer", foreign_keys="Offer.request_id", back_populates="request", cascade="all, delete-orphan"
     )
 
 
@@ -61,8 +68,8 @@ class Offer(Base):
     )
 
     # Relationships
-    request: Mapped["Request"] = relationship("Request", back_populates="offers")
-    provider: Mapped["User"] = relationship("User", back_populates="offers")
+    request: Mapped["Request"] = relationship("Request", foreign_keys=[request_id], back_populates="offers")
+    provider: Mapped["User"] = relationship("User", foreign_keys=[provider_id], back_populates="offers")
 
 
 from backend.app.models.user import User  # noqa: E402

@@ -46,7 +46,7 @@ export const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-[#f6f5f4] text-[#1a1a1a]">
       <SafetyBanner />
       <Navbar
         onOpenCreateRequest={() => setCreateRequestOpen(true)}
@@ -54,7 +54,7 @@ export const AppContent: React.FC = () => {
         onOpenCreateService={() => setCreateServiceOpen(true)}
       />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 w-full">
         <Routes>
           <Route
             path="/"

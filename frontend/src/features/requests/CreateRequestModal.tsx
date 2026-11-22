@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Modal } from "../../components/common/Modal";
 import { api } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
+import { AlertCircle } from "lucide-react";
 
 interface CreateRequestModalProps {
   isOpen: boolean;
@@ -47,7 +48,7 @@ export const CreateRequestModal: React.FC<CreateRequestModalProps> = ({
 
   const onSubmit = async (values: FormValues) => {
     if (!isAuthenticated) {
-      setError("Please sign in or select a demo user to post a request.");
+      setError("Please sign in or switch to a demo persona to post a request.");
       return;
     }
 
@@ -72,30 +73,31 @@ export const CreateRequestModal: React.FC<CreateRequestModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} title="Post a Campus Request" maxWidth="lg">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
-            {error}
+          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+            <span>{error}</span>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">
             Request Title *
           </label>
           <input
             {...register("title", { required: "Title is required", minLength: 3 })}
             type="text"
-            placeholder="e.g., Need a 10-slide presentation polished by tomorrow"
-            className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+            placeholder="e.g., Need a 10-slide presentation reviewed and polished by tomorrow"
+            className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] focus:outline-none focus:border-[#0075de] transition-colors"
           />
           {errors.title && <p className="text-xs text-rose-500 mt-1">{errors.title.message}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Category *</label>
+            <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">Category *</label>
             <select
               {...register("category")}
-              className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] bg-white focus:outline-none focus:border-[#0075de] transition-colors"
             >
               <option value="Academic Help & Tutoring">Academic Help & Tutoring</option>
               <option value="Design & Media">Design & Media</option>
@@ -109,10 +111,10 @@ export const CreateRequestModal: React.FC<CreateRequestModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Request Type *</label>
+            <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">Request Type *</label>
             <select
               {...register("request_type")}
-              className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] bg-white focus:outline-none focus:border-[#0075de] transition-colors"
             >
               <option value="task">Specific Task / Project Help</option>
               <option value="item">Borrow / Need an Item</option>
@@ -125,71 +127,71 @@ export const CreateRequestModal: React.FC<CreateRequestModalProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Arrangement</label>
+            <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">Arrangement</label>
             <select
               {...register("preferred_arrangement")}
-              className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] bg-white focus:outline-none focus:border-[#0075de] transition-colors"
             >
-              <option value="any">Any / Negotiable</option>
-              <option value="paid">Paid Gig</option>
+              <option value="any">Any / Open to Offers</option>
+              <option value="paid">Paid (Stipend / Bounty)</option>
               <option value="free">Free / Peer Favor</option>
-              <option value="exchange">Resource Exchange</option>
+              <option value="exchange">Skill / Item Exchange</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">
               Budget (₹) {selectedArrangement === "paid" ? "*" : "(optional)"}
             </label>
             <input
               {...register("budget")}
               type="number"
               min="0"
-              placeholder="e.g., 400"
-              className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              placeholder={selectedArrangement === "free" ? "0 (Free)" : "e.g., 400"}
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] focus:outline-none focus:border-[#0075de] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Deadline / When</label>
+            <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">Deadline / When</label>
             <input
               {...register("deadline")}
               type="text"
               placeholder="e.g., Tomorrow 6 PM"
-              className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] focus:outline-none focus:border-[#0075de] transition-colors"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">
             Detailed Description *
           </label>
           <textarea
             {...register("description", { required: "Description is required", minLength: 5 })}
             rows={4}
-            placeholder="Explain exactly what you need help with, expectations, and any relevant details..."
-            className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+            placeholder="Explain what you need help with, requirements, and any specific expectations..."
+            className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e6e6e6] focus:outline-none focus:border-[#0075de] transition-colors"
           ></textarea>
           {errors.description && (
             <p className="text-xs text-rose-500 mt-1">{errors.description.message}</p>
           )}
         </div>
 
-        <div className="pt-2 flex items-center justify-end gap-3">
+        <div className="pt-3 flex items-center justify-end gap-3 border-t border-[#f0efee]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors"
+            className="btn-ghost text-sm"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-xl shadow-xs transition-colors"
+            className="btn-primary text-sm"
           >
-            {isSubmitting ? "Posting..." : "Publish Request"}
+            {isSubmitting ? "Publishing..." : "Publish Request"}
           </button>
         </div>
       </form>

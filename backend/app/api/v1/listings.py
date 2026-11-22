@@ -6,7 +6,10 @@ from backend.app.core.deps import get_db, get_current_user, get_optional_current
 from backend.app.models.listing import Listing, ListingImage
 from backend.app.models.moderation import Block
 from backend.app.models.user import User
-from backend.app.schemas.listing import ListingCreate, ListingUpdate, ListingOut
+from backend.app.models.transaction import Transaction
+from backend.app.models.message import Message
+from backend.app.schemas.listing import ListingCreate, ListingUpdate, ListingOut, ListingInquiry
+from backend.app.schemas.transaction import TransactionOut
 
 router = APIRouter(prefix="/listings", tags=["Marketplace Listings"])
 
@@ -138,3 +141,64 @@ def archive_listing(
     listing.availability_status = "archived"
     db.commit()
     return {"message": "Listing archived successfully"}
+
+
+@router.post("/{listing_id}/inquire", response_model=TransactionOut, status_code=status.HTTP_201_CREATED)
+def inquire_listing(
+    listing_id: str,
+    inquiry_in: ListingInquiry,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    listing = db.query(Listing).filter(Listing.id == listing_id).first()
+    if not listing:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
+    if listing.owner_id == current_user.id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot request your own listing")
+    if listing.availability_status != "available":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Listing is currently {listing.availability_status}")
+
+    # Check if active transaction already exists between these users for this item
+    existing_txn = db.query(Transaction).filter(
+        Transaction.listing_id == listing.id,
+        Transaction.requester_or_buyer_id == current_user.id,
+        Transaction.status.in_(["accepted", "in_progress"])
+    ).first()
+    if existing_txn:
+        msg = Message(
+            sender_id=current_user.id,
+            recipient_id=listing.owner_id,
+            related_type="listing",
+            related_id=listing.id,
+            content=inquiry_in.message,
+        )
+        db.add(msg)
+        db.commit()
+        return existing_txn
+
+    # Create new transaction
+    txn = Transaction(
+        listing_id=listing.id,
+        requester_or_buyer_id=current_user.id,
+        provider_or_owner_id=listing.owner_id,
+        status="in_progress",
+    )
+    db.add(txn)
+    db.flush()
+
+    # Record inquiry message
+    content = inquiry_in.message
+    if inquiry_in.proposed_meeting_spot:
+        content += f"\n\nPreferred meeting spot: {inquiry_in.proposed_meeting_spot}"
+
+    msg = Message(
+        sender_id=current_user.id,
+        recipient_id=listing.owner_id,
+        related_type="listing",
+        related_id=listing.id,
+        content=content,
+    )
+    db.add(msg)
+    db.commit()
+    db.refresh(txn)
+    return txn

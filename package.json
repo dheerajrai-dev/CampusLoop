@@ -1,0 +1,11 @@
+{
+  "name": "campusloop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CampusLoop - Peer-to-peer resource and services exchange for college campuses",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev",
+    "test": "pytest"
+  }
+}

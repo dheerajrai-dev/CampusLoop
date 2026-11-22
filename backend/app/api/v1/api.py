@@ -8,6 +8,7 @@ from backend.app.api.v1 import (
     services,
     transactions,
     moderation,
+    messages,
 )
 
 api_router = APIRouter()
@@ -19,3 +20,4 @@ api_router.include_router(listings.router)
 api_router.include_router(services.router)
 api_router.include_router(transactions.router)
 api_router.include_router(moderation.router)
+api_router.include_router(messages.router)

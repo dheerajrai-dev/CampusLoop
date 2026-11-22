@@ -9,7 +9,7 @@ export const SafetyBanner: React.FC = () => {
   return (
     <div className="bg-amber-50/90 border-b border-amber-200/80 px-4 py-2.5 text-xs text-amber-900 transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
           <span>
             <strong>Campus Safety:</strong> Always arrange exchanges in public campus areas (libraries, cafeteria, quads).

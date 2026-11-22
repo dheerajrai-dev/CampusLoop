@@ -17,6 +17,11 @@ export interface User {
   avatar_url?: string | null;
   bio?: string | null;
   is_verified: boolean;
+  phone?: string | null;
+  show_phone?: boolean;
+  whatsapp?: string | null;
+  show_whatsapp?: boolean;
+  contact_note?: string | null;
   created_at: string;
   campus?: Campus;
 }
@@ -31,6 +36,9 @@ export interface UserPublic {
   avatar_url?: string | null;
   bio?: string | null;
   is_verified: boolean;
+  phone?: string | null;
+  whatsapp?: string | null;
+  contact_note?: string | null;
   created_at: string;
 }
 
@@ -60,6 +68,10 @@ export interface Offer {
   created_at: string;
   updated_at: string;
   provider?: UserPublic | null;
+  request_title?: string;
+  request_category?: string;
+  request_status?: string;
+  requester_name?: string;
 }
 
 export interface RequestItem {
@@ -73,13 +85,20 @@ export interface RequestItem {
   budget?: number | null;
   preferred_arrangement: "free" | "paid" | "exchange" | "any";
   deadline?: string | null;
-  status: "open" | "assigned" | "completed" | "cancelled" | "archived";
+  status: "open" | "assigned" | "in_progress" | "completed" | "cancelled" | "archived";
+  assigned_provider_id?: string | null;
+  accepted_offer_id?: string | null;
   created_at: string;
   updated_at: string;
   requester?: UserPublic | null;
+  assigned_provider?: UserPublic | null;
   offers_count: number;
   offers: Offer[];
+  match_score?: number | null;
+  match_reasons?: string[];
 }
+
+export type Request = RequestItem;
 
 export interface ListingImage {
   id: string;
@@ -144,10 +163,44 @@ export interface Transaction {
   status: "accepted" | "in_progress" | "completed" | "cancelled";
   completion_confirmed_by_requester: boolean;
   completion_confirmed_by_provider: boolean;
+  cancellation_reason?: string | null;
+  cancelled_by_id?: string | null;
   created_at: string;
   updated_at: string;
   completed_at?: string | null;
   requester_or_buyer?: UserPublic | null;
   provider_or_owner?: UserPublic | null;
   reviews: Review[];
+}
+
+export interface Message {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  related_type: "request" | "listing" | "service" | "transaction";
+  related_id: string;
+  content: string;
+  created_at: string;
+  sender?: UserPublic | null;
+  recipient?: UserPublic | null;
+}
+
+export interface UnifiedActivity {
+  posted_requests: RequestItem[];
+  offers_sent: Offer[];
+  active_tasks: Transaction[];
+  completed_tasks: Transaction[];
+  cancelled_tasks: Transaction[];
+  stats: {
+    open_requests_count?: number;
+    active_tasks_count?: number;
+    pending_offers_count?: number;
+    completed_tasks_count?: number;
+    total_posted?: number;
+    total_offers_sent?: number;
+    active_tasks?: number;
+    completed_tasks?: number;
+    cancelled_tasks?: number;
+    reputation_score?: number;
+  };
 }

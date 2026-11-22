@@ -27,6 +27,10 @@ class TransactionStatusUpdate(BaseModel):
     status: str = Field(pattern="^(accepted|in_progress|completed|cancelled)$")
 
 
+class TransactionCancel(BaseModel):
+    reason: str = Field(..., min_length=3, max_length=500)
+
+
 class TransactionOut(BaseModel):
     id: str
     request_id: str | None = None
@@ -38,6 +42,8 @@ class TransactionOut(BaseModel):
     status: str
     completion_confirmed_by_requester: bool
     completion_confirmed_by_provider: bool
+    cancellation_reason: str | None = None
+    cancelled_by_id: str | None = None
     created_at: datetime
     updated_at: datetime
     completed_at: datetime | None = None

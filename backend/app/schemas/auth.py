@@ -25,3 +25,17 @@ class RegisterRequest(BaseModel):
     course: str | None = None
     year_or_semester: str | None = None
     bio: str | None = None
+    phone: str | None = None
+    show_phone: bool = False
+    whatsapp: str | None = None
+    show_whatsapp: bool = False
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    new_password: str = Field(min_length=6)
+    reset_code: str = Field(min_length=4)

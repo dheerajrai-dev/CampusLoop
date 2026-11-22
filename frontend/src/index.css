@@ -1,7 +1,156 @@
 @import "tailwindcss";
 
 @layer base {
-  body {
-    @apply bg-slate-50 text-slate-900 antialiased font-sans min-h-screen selection:bg-indigo-100 selection:text-indigo-900;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
+
+  :root {
+    --color-canvas: #ffffff;
+    --color-panel: #f9f9f8;
+    --color-warm: #f6f5f4;
+    --color-rule: #e6e6e6;
+    --color-ink: #0d0d0d;
+    --color-text: #1a1a1a;
+    --color-muted: #757575;
+    --color-action: #0075de;
+    --color-secondary: #e6f3fe;
+    --color-link-dark: #005bab;
+    --color-lavender: #eadbfa;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Notion-style paper elevation */
+.paper-card {
+  background-color: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 13px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.02), 0px 4px 12px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.paper-card label {
+  font-size: 13px;
+}
+
+.paper-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.03), 0px 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.panel-flat {
+  background-color: #f9f9f8;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+/* Button styles matching Notion essentials (38px height, 8px radius) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  height: auto;
+  padding: 6px 16px;
+  background-color: #0075de;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0060b5;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  height: auto;
+  padding: 6px 16px;
+  background-color: #e6f3fe;
+  color: #005bab;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #d6ebfd;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  height: auto;
+  padding: 6px 14px;
+  background-color: transparent;
+  color: #1a1a1a;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background-color: #f6f5f4;
+  border-color: #d1d5db;
+}
+
+/* Disabled button states */
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Reusable input field */
+.input-field {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #e6e6e6;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input-field:focus {
+  border-color: #0075de;
+}
+
+/* Word token capsule */
+.word-token {
+  background-color: #eadbfa;
+  color: #3b1666;
+  border-radius: 9999px;
+  padding: 2px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
 }
